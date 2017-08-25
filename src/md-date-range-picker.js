@@ -161,7 +161,7 @@
         $scope.isSelectedStartDate = isSelectedStartDate;
         $scope.isSelectedEndDate = isSelectedEndDate;
 
-        $scope.updateActiveDate = updateActiveDate;
+        $scope.updateActiveDate = updateActiveDate;$scope.$on('triggerClickDate',handleClickDate);
         $scope.selectedDateText = selectedDateText;
         $scope.focusToDate = focusToDate;
 
