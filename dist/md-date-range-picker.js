@@ -373,26 +373,39 @@
         }
 
         function handleClickDate($event, date) {
-            var changed = false;
+
+            var changed = false; //if changed then trigger digest
 
             if (!date) {
                 //this is the init of the calendar so that one day can be a full daterange
-                if ($scope.dateStart)
+                if ($scope.dateStart) {
                     $scope.dateEnd = $scope.dateStart;
-                else if ($scope.dateEnd) 
+                    changed = true;
+                }
+                else if ($scope.dateEnd) {
                     $scope.dateStart = $scope.dateEnd;
+                    changed = true;
+                }
+                $scope.init = true;
             }
-
-            if (getDateDiff($scope.dateStart, $scope.dateEnd) === 0) {
-                if (getDateDiff($scope.dateStart, date) > 0) {
-                    $scope.dateEnd = date;
+            if (date) {
+                if (!$scope.init) {
+                    if (getDateDiff($scope.dateStart, $scope.dateEnd) === 0) {
+                        if (getDateDiff($scope.dateStart, date) > 0) {
+                            $scope.dateEnd = date;
+                        } else {
+                            $scope.dateStart = date;
+                        }
+                        changed = true;
+                    } else {
+                        $scope.dateStart = date;
+                        $scope.dateEnd = date;
+                    } 
                 } else {
                     $scope.dateStart = date;
-                }
-                changed = true;
-            } else {
-                $scope.dateStart = date;
-                $scope.dateEnd = date;
+                    $scope.dateEnd = date;
+                    $scope.init=false;
+                }           
             }
             $scope.selectedTemplate = false;
             $scope.selectedTemplateName = $scope.selectedDateText();
