@@ -161,7 +161,9 @@
         $scope.isSelectedStartDate = isSelectedStartDate;
         $scope.isSelectedEndDate = isSelectedEndDate;
 
-        $scope.updateActiveDate = updateActiveDate;$scope.$on('triggerClickDate',handleClickDate);
+        $scope.updateActiveDate = updateActiveDate;$scope.$on('triggerClickDate',function($e){
+            handleClickDate($e, null);
+        });
         $scope.selectedDateText = selectedDateText;
         $scope.focusToDate = focusToDate;
 
@@ -372,6 +374,15 @@
 
         function handleClickDate($event, date) {
             var changed = false;
+
+            if (!date) {
+                //this is the init of the calendar so that one day can be a full daterange
+                if ($scope.dateStart)
+                    $scope.dateEnd = $scope.dateStart;
+                else if ($scope.dateEnd) 
+                    $scope.dateStart = $scope.dateEnd;
+            }
+
             if (getDateDiff($scope.dateStart, $scope.dateEnd) === 0) {
                 if (getDateDiff($scope.dateStart, date) > 0) {
                     $scope.dateEnd = date;
