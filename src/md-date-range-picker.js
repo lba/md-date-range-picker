@@ -404,7 +404,8 @@
                 } else {
                     $scope.dateStart = date;
                     $scope.dateEnd = date;
-                    $scope.init=false;
+                    $scope.init = false;
+                    changed = true;
                 }           
             }
             $scope.selectedTemplate = false;

@@ -1,7 +1,7 @@
 /*
 * Name: md-date-range-picker
 * Version: 0.4.0
-* Build Date: 8/29/2017
+* Build Date: 8/30/2017
 * Author: roel barreto <greatcodeideas@gmail.com>
 */
 (function (window, angular) {
@@ -404,7 +404,8 @@
                 } else {
                     $scope.dateStart = date;
                     $scope.dateEnd = date;
-                    $scope.init=false;
+                    $scope.init = false;
+                    changed = true;
                 }           
             }
             $scope.selectedTemplate = false;
