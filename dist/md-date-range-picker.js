@@ -46,14 +46,14 @@
                                             break;
                                         case 'date1':
                                             if (scope.handleClickDate(e, scope.dates[eventParam])) {
-                                                scope.runIfNotInDigest(scope.triggerChange);
+                                                scope.runIfNotInDigest(scope.triggerChange, eventKey);
                                             } else {
                                                 scope.runIfNotInDigest();
                                             }
                                             break;
                                         case 'date2':
                                             if (scope.handleClickDate(e, scope.dates2[eventParam])) {
-                                                scope.runIfNotInDigest(scope.triggerChange);
+                                                scope.runIfNotInDigest(scope.triggerChange, eventKey);
                                             } else {
                                                 scope.runIfNotInDigest();
                                             }
@@ -95,12 +95,19 @@
                                     }
                     }
 
-                scope.runIfNotInDigest = function (operation) {
+                scope.runIfNotInDigest = function (operation, eventKey) {
 
                     if (scope.$root != null && !scope.$root.$$phase) { // check if digest already in progress
-                        //scope.$apply(); // launch digest;
+                        // launch digest;
 
-                        scope.$emit('dateupdated', {dateStart: scope.dateStart, dateEnd: scope.dateEnd})
+                        if (eventKey) {
+                            if (eventKey.indexOf("date")>-1)
+                                scope.$emit('dateupdated', {dateStart: scope.dateStart, dateEnd: scope.dateEnd})
+                        } else {
+                            scope.$apply();
+                        }
+                        
+
                         if (operation && typeof operation === 'function'){
                             operation();
                         }
@@ -233,13 +240,14 @@
                     $scope.focusToDate($scope.dateStart);
                 }
             });
-            
+
             $scope.$on('dateupdated', function (e, args) {
 
                 var dateStart = args.dateStart,
                     dateEnd = args.dateEnd;
                 $scope.dateStart = dateStart; $scope.dateEnd = dateEnd;
-                if (dateStart && !$scope.inCurrentMonth(dateStart) && !$scope.inCurrentMonth(dateStart, true)) {
+
+                if ($scope.dateStart && !$scope.inCurrentMonth($scope.dateStart) && !$scope.inCurrentMonth($scope.dateStart, true)) {
                     $scope.focusToDate($scope.dateStart);
                 }
 
@@ -433,6 +441,7 @@
         }
 
         function updateActiveDate(isSecondMonth) {
+
             var d = new Date($scope.activeYear, $scope.activeMonth, 1),
                 d2 = new Date($scope.activeYear2, $scope.activeMonth2, 1);
             if (isSecondMonth) {
@@ -590,6 +599,7 @@
         }
 
         function focusToDate(d) {
+
             var d2 = new Date(d.getFullYear(), d.getMonth() + 1, 1);
             $scope.activeDate = d;
             $scope.activeMonth = d.getMonth();
