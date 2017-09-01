@@ -305,7 +305,7 @@
         }
 
         function selectCustomRange(tmpltKey,tmpltObj){
-            console.warn("selct custom range", tmpltKey, tmpltObj)
+
              $scope.dateStart = tmpltObj.dateStart;
             $scope.dateEnd = tmpltObj.dateEnd;
             $scope.selectedTemplate = tmpltKey;
@@ -384,8 +384,7 @@
         }
 
         function handleClickDate($event, date) {
-            console.error("handleClickDate", date, $scope.dateStart, $scope.dateEnd, $scope.init)
-            window.f = $scope;
+
             var changed = false; //if changed then trigger digest
 
             if (!date) {
