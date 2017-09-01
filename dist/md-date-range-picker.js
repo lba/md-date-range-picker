@@ -96,13 +96,16 @@
                     }
 
                 scope.runIfNotInDigest = function (operation) {
+
                     if (scope.$root != null && !scope.$root.$$phase) { // check if digest already in progress
-                        scope.$apply(); // launch digest;
+                        //scope.$apply(); // launch digest;
+
+                        scope.$emit('dateupdated', {dateStart: scope.dateStart, dateEnd: scope.dateEnd})
                         if (operation && typeof operation === 'function'){
                             operation();
                         }
                     }
-                };    
+                };
                 element.on('click', function (e) {
                     var eventKey = e.target.getAttribute('event-key'),
                         eventParam = e.target.getAttribute('event-param');
@@ -119,8 +122,8 @@
         return directive
     }
 
-    mdDateRangePickerCtrl.$inject = ['$scope', '$filter'];
-    function mdDateRangePickerCtrl($scope, $filter) {
+    mdDateRangePickerCtrl.$inject = ['$scope', '$filter', '$rootScope'];
+    function mdDateRangePickerCtrl($scope, $filter, $rootScope) {
         var ctrl = $scope, NUMBER_OF_MONTH_TO_DISPLAY = 2,
             SELECTION_TEMPLATES = {
                 'TD': getLocalizationVal('Today'),
@@ -230,10 +233,17 @@
                     $scope.focusToDate($scope.dateStart);
                 }
             });
-            $scope.$watch('dateStart', function (next, prev) {
-                if (next !== prev && $scope.dateStart && !$scope.inCurrentMonth($scope.dateStart) && !$scope.inCurrentMonth($scope.dateStart, true)) {
+            
+            $scope.$on('dateupdated', function (e, args) {
+
+                var dateStart = args.dateStart,
+                    dateEnd = args.dateEnd;
+                $scope.dateStart = dateStart; $scope.dateEnd = dateEnd;
+                if (dateStart && !$scope.inCurrentMonth(dateStart) && !$scope.inCurrentMonth(dateStart, true)) {
                     $scope.focusToDate($scope.dateStart);
                 }
+
+                $rootScope.$broadcast('dateRangeSelected', args)
             });
 
             /**
@@ -273,7 +283,7 @@
                 var currTmpl = $scope.customTemplates[i];
                 SELECTION_TEMPLATES_CUSTOM[currTmpl.name] = currTmpl;
             }  
-			/**
+            /**
              * get the templates to use 
             */
             for (var tmplKey in SELECTION_TEMPLATES) {
@@ -295,6 +305,7 @@
         }
 
         function selectCustomRange(tmpltKey,tmpltObj){
+            console.warn("selct custom range", tmpltKey, tmpltObj)
              $scope.dateStart = tmpltObj.dateStart;
             $scope.dateEnd = tmpltObj.dateEnd;
             $scope.selectedTemplate = tmpltKey;
@@ -373,7 +384,8 @@
         }
 
         function handleClickDate($event, date) {
-
+            console.error("handleClickDate", date, $scope.dateStart, $scope.dateEnd, $scope.init)
+            window.f = $scope;
             var changed = false; //if changed then trigger digest
 
             if (!date) {
@@ -402,14 +414,16 @@
                         $scope.dateEnd = date;
                     } 
                 } else {
+
                     $scope.dateStart = date;
                     $scope.dateEnd = date;
                     $scope.init = false;
                     changed = true;
-                }           
+               }           
             }
             $scope.selectedTemplate = false;
             $scope.selectedTemplateName = $scope.selectedDateText();
+
             return changed;
         }
 
